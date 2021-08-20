@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Creature List</h1>
+
+{% for creature in creatures %}
+  <div class="card">
+    <div class="card-content">
+        <span class="card-title">{{ cat.name }}</span>
+        <p>Species: {{ creature.species }}</p>
+        <p>Description: {{ creature.description }}</p>
+        {% if creature.diet == 'plants' %}
+            <p>Diet: Herbivore</p>
+        {% elif creature.diet == 'animals' %}
+            <p>Diet: Carnivore</p>
+        {% else %}
+            <p>Diet: Omnivore</p>
+        {% endif %}
+    </div>
+  </div>
+{% endfor %}
+
+{% endblock %}
