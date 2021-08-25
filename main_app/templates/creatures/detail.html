@@ -16,6 +16,10 @@
         <p>Diet: Omnivore</p>
     {% endif %}
   </div>
+  <div class="card-action">
+    <a href="{% url 'creatures_update' creature.id %}">Edit</a>
+    <a href="{% url 'creatures_delete' creature.id %}">Delete</a>
+  </div>
 </div>
 
 {% endblock %}

@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Creature  # imports the class from the models file
+
+
 
 # In place of real databse
 # class Creature:
@@ -18,6 +21,21 @@ from .models import Creature  # imports the class from the models file
 # ]
 
 # Create your views here.
+# - Class based views -
+class CreatureCreate(CreateView):
+    model = Creature
+    fields = '__all__'
+
+class CreatureUpdate(UpdateView):
+    model = Creature
+    fields = ['species', 'description', 'diet']
+
+class CreatureDelete(DeleteView):
+    model = Creature
+    success_url = '/creatures/'
+
+
+# - Function based views - 
 def home(request):
     return HttpResponse('<h1>Creature Cluster</h1>')
 
