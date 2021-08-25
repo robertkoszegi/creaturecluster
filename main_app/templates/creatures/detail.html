@@ -2,24 +2,59 @@
 {% block content %}
 
 <h1>Creature Details</h1>
-
-<div class="card">
-  <div class="card-content">
-    <span class="card-title">{{ creature.name }}</span>
-    <p>Breed: {{ creature.species }}</p>
-    <p>Description: {{ creature.description }}</p>
-    {% if creature.diet == 'plants' %}
-        <p>Diet: Herbivore</p>
-    {% elif creature.diet == 'animals' %}
-        <p>Diet: Carnivore</p>
-    {% else %}
-        <p>Diet: Omnivore</p>
-    {% endif %}
-  </div>
-  <div class="card-action">
-    <a href="{% url 'creatures_update' creature.id %}">Edit</a>
-    <a href="{% url 'creatures_delete' creature.id %}">Delete</a>
+<div class="row">
+  <div class="col s6">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">{{ creature.name }}</span>
+        <p>Breed: {{ creature.species }}</p>
+        <p>Description: {{ creature.description }}</p>
+        {% if creature.diet == 'plants' %}
+            <p>Diet: Herbivore</p>
+        {% elif creature.diet == 'animals' %}
+            <p>Diet: Carnivore</p>
+        {% else %}
+            <p>Diet: Omnivore</p>
+        {% endif %}
+      </div>
+      <div class="card-action">
+        <a href="{% url 'creatures_update' creature.id %}">Edit</a>
+        <a href="{% url 'creatures_delete' creature.id %}">Delete</a>
+      </div>
+    </div>
+  </div>  
+  <div class="col s6">
+    <form action="{% url 'add_feeding' creature.id %}" method="post">
+      {% csrf_token %}
+      {{ feeding_form.as_p }}
+      <input type="submit" class="btn" value="Add Feeding">
+    </form>
+    <table class="striped">
+      <thead>
+        <tr><th>Date</th><th>Meal</th></tr>
+      </thead>
+      <tbody>
+        {% for feeding in creature.feeding_set.all %}
+          <tr>
+            <td>{{feeding.date}}</td>
+            <td>{{feeding.get_meal_display}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
+<script>
+  var dateEl = document.getElementById('id_date');
+  M.Datepicker.init(dateEl, {
+    format: 'yyyy-mm-dd',
+    defaultDate: new Date(),
+    setDefaultDate: true,
+    autoClose: true
+  });
 
+  // add additional JS to initialize select below
+  var selectEl = document.getElementById('id_meal');
+  M.FormSelect.init(selectEl);
+</script>
 {% endblock %}

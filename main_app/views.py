@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Creature  # imports the class from the models file
+from .forms import FeedingForm
 
 
 
@@ -48,4 +49,21 @@ def creatures_index(request):
 
 def creatures_detail(request, creature_id):
     creature = Creature.objects.get(id=creature_id)
-    return render(request, 'creatures/detail.html', {'creature': creature})
+    # instantiate FeedingForm to be rendered in the template
+    feeding_form = FeedingForm()
+    return render(request, 'creatures/detail.html', {
+        # include the creature and feeding_form in the context
+        'creature': creature, 'feeding_form': feeding_form
+    })
+
+def add_feeding(request, creature_id):
+  # create a ModelForm instance using the data in request.POST
+  form = FeedingForm(request.POST)
+  # validate the form
+  if form.is_valid():
+    # don't save the form to the db until it
+    # has the creature_id assigned
+    new_feeding = form.save(commit=False)
+    new_feeding.creature_id = creature_id
+    new_feeding.save()
+  return redirect('detail', creature_id=creature_id)
