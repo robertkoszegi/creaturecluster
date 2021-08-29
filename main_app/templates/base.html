@@ -12,20 +12,26 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 <body>
-  <header class="navbar-fixed">
-    <nav>
-      <div class="nav-wrapper">
-        <ul>
-          <li><a href="/" class="left brand-logo">&nbsp;&nbsp;CatCollector</a></li>
-        </ul>
-        <ul class="right">
-          <li><a href="/about">About</a></li>
-          <li><a href="{% url 'creatures_create' %}">Add a Creature</a></li>
-          <li><a href="/creatures">All My Creatures</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
+	<header class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper">
+				<ul>
+					<li><a href="/" class="left brand-logo">&nbsp;&nbsp;CatCollector</a></li>
+				</ul>
+			<ul class="right">
+			<li><a href="/about">About</a></li>
+      {% if user.is_authenticated %}
+			<li><a href="{% url 'creatures_create' %}">Add a Creature</a></li>
+			<li><a href="/creatures">All My Creatures</a></li>
+      <li><a href="{% url 'logout' %}">Log Out</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}">Log In</a></li>
+      <li><a href="{% url 'signup' %}">Sign Up</a></li>
+      {% endif %}
+			</ul>
+			</div>
+		</nav>
+	</header>
   <main class="container">
     {% block content %}
     {% endblock %}

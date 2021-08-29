@@ -7,7 +7,7 @@
   <div class="card">
     <a href="{% url 'detail' creature.id %}">
       <div class="card-content">
-        <span class="card-title">{{ cat.name }}</span>
+        <span class="card-title">{{ creature.name }}</span>
         <p>Species: {{ creature.species }}</p>
         <p>Description: {{ creature.description }}</p>
         {% if creature.diet == 'plants' %}
