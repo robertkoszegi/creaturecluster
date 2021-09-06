@@ -8,9 +8,18 @@ MEALS = (
     ('L', 'Lunch'),
     ('D', 'Dinner')
 )
+
+SNACKTYPE = (
+    ('animal', 'Animal'),
+    ('plant', 'Plant'),
+)
+
 class Snack(models.Model):
   name = models.CharField(max_length=50)
-  color = models.CharField(max_length=20)
+  snacktype = models.CharField(
+      max_length=20,
+      choices=SNACKTYPE, 
+      null=True)
 
   def __str__(self):
     return self.name
@@ -23,8 +32,14 @@ class Creature(models.Model):
     name = models.CharField(max_length=100)
     species = models.CharField(max_length=100)
     description = models.CharField(max_length=250)
-    diet = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    snacks = models.ManyToManyField(Snack)
+    diet = models.CharField(
+        max_length=20,
+        choices=SNACKTYPE,
+        null=True,
+        default=SNACKTYPE,
+    )
 
     def __str__(self):
         return self.name

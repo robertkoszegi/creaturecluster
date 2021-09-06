@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse # Not in cat collector
+from django.http import HttpResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from .models import Creature, Snack # imports the class from the models file
-from .forms import FeedingForm
+from .forms import FeedingForm, CreatureForm
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -29,7 +29,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # - Class based views -
 class CreatureCreate(CreateView):
     model = Creature
-    fields = '__all__'
+    fields = ['name', 'species', 'description', 'diet']
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -39,6 +39,7 @@ class CreatureCreate(CreateView):
 class CreatureUpdate(LoginRequiredMixin, UpdateView):
     model = Creature
     fields = ['species', 'description', 'diet']
+
 
 class CreatureDelete(LoginRequiredMixin, DeleteView):
     model = Creature
@@ -53,19 +54,24 @@ def about(request):
     return render(request, 'about.html')
 
 def creatures_index(request):
-    creatures = Creature.objects.filter(user=request.user).order_by('name') # query the imported model for rendering
+    # creatures = Creature.objects.filter(user=request.user).order_by('name') # query the imported model for rendering
     # alternative:
-    # creatures = request.user.creature_set.all()
+    creatures = request.user.creature_set.all()
     return render(request, 'creatures/index.html', {'creatures': creatures})
 
 @login_required
 def creatures_detail(request, creature_id):
     creature = Creature.objects.get(id=creature_id)
+    # get snack that match the creature's diet
+    matching_snacks = Snack.objects.filter(snacktype=creature.diet)
+    snacks_remaining = matching_snacks.exclude(id__in=creature.snacks.values_list('id'))
     # instantiate FeedingForm to be rendered in the template
     feeding_form = FeedingForm()
     return render(request, 'creatures/detail.html', {
         # include the creature and feeding_form in the context
-        'creature': creature, 'feeding_form': feeding_form
+        'creature': creature, 
+        'feeding_form': feeding_form,
+        'snacks': snacks_remaining,
     })
 
 @login_required
@@ -93,12 +99,19 @@ class SnackCreate(LoginRequiredMixin, CreateView):
 
 class SnackUpdate(LoginRequiredMixin, UpdateView):
     model = Snack
-    fields = ['name', 'color']
+    fields = ['name', 'snacktype']
 
 class SnackDelete(LoginRequiredMixin, DeleteView):
     model = Snack
     success_url = '/snacks/'
 
+def assoc_snack(request, creature_id, snack_id):
+  Creature.objects.get(id=creature_id).snacks.add(snack_id)
+  return redirect('detail', creature_id=creature_id)
+
+def unassoc_snack(request, creature_id, snack_id):
+  Creature.objects.get(id=creature_id).snacks.remove(snack_id)
+  return redirect('detail', creature_id=creature_id)
 
 def signup(request):
     error_message = ''

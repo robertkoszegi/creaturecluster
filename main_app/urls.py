@@ -11,6 +11,10 @@ urlpatterns = [
     path('creatures/<int:pk>/update', views.CreatureUpdate.as_view(), name='creatures_update'),
     path('creatures/<int:pk>/delete', views.CreatureDelete.as_view(), name='creatures_delete'),
     path('creatures/<int:creature_id>/add_feeding', views.add_feeding, name='add_feeding'),
+    # associate a toy with a cat (M:M)
+    path('creatures/<int:creature_id>/assoc_snack/<int:snack_id>/', views.assoc_snack, name='assoc_snack'),
+    # unassociate a toy and cat
+    path('creatures/<int:creature_id>/unassoc_snack/<int:snack_id>/', views.unassoc_snack, name='unassoc_snack'),
     path('snacks/', views.SnackList.as_view(), name='snacks_index'),
     path('snacks/<int:pk>/', views.SnackDetail.as_view(), name='snacks_detail'),
     path('snacks/create/', views.SnackCreate.as_view(), name='snacks_create'),
